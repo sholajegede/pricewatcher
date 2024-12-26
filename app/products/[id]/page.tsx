@@ -171,12 +171,21 @@ const ProductDetails = async ({ params: { id } }: Props) => {
             {product?.description && (
               <div className="flex flex-col gap-2">
                 <ul className="list-disc pl-5">
-                  {product.description.split("\n").map((line, index) => (
-                    <li key={index}>
-                      <strong>{line.split(":")[0]}:</strong>{" "}
-                      {line.split(":").slice(1).join(":")}
-                    </li>
-                  ))}
+                  {product.description.split("\n").map((line, index) => {
+                    const [key, ...valueParts] = line.split(":");
+                    const value = valueParts.join(":").trim();
+                    return (
+                      <li key={index}>
+                        {value ? (
+                          <>
+                            <strong>{key.trim()}:</strong> {value}
+                          </>
+                        ) : (
+                          <>{key.trim()}</>
+                        )}
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             )}
@@ -194,7 +203,7 @@ const ProductDetails = async ({ params: { id } }: Props) => {
             height={30}
           />
 
-          <Link href={product.url} className="text-base text-white">
+          <Link href={product.url} target="_blank" className="text-base text-white">
             Shop Now
           </Link>
         </Button>

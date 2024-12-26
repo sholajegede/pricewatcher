@@ -8,8 +8,22 @@ import { Toaster } from "@/components/ui/toaster";
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'PriceWatcher - Amazon Price Tracker',
+  title: 'PriceWatcher | Amazon Price Tracker',
   description: 'Track Amazon product prices and get notified immediately when they drop.',
+  icons: {
+    icon: '/favicon.ico'
+  },
+  openGraph: {
+    title: "PriceWatcher | Amazon Price Tracker",
+    description: "Track Amazon product prices and get notified immediately when they drop.",
+    images: [
+      {
+        url: 'https://pricewatcher.vercel.app/home.png',
+        alt: 'PriceWatcher | Amazon Price Tracker'
+      }
+    ],
+    type: 'website'
+  }
 };
 
 export default function RootLayout({

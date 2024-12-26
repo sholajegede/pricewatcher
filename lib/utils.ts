@@ -90,17 +90,21 @@ export async function extractPageForCategory(
   return "";
 }
 
-export async function extractDescription(
-  page: puppeteer.Page
-): Promise<string> {
+export async function extractDescription(page: puppeteer.Page): Promise<string> {
   try {
     const aboutSection = await page.$$eval(
-      "#featurebullets_feature_div h1.a-size-base-plus.a-text-bold + ul.a-unordered-list",
+      "ul.a-unordered-list.a-vertical.a-spacing-small", // Target the specific unordered list
       (ulElements: Element[]) => {
         return ulElements
           .map((ul) =>
-            Array.from(ul.querySelectorAll("li"))
-              .map((li) => li.textContent?.trim() || "")
+            Array.from(ul.querySelectorAll("li span.a-list-item"))
+              .map((span) =>
+                span.textContent
+                  ?.trim()
+                  .replace(/\s+/g, " ")
+                  .replace(/\u200b/g, "")
+                  || ""
+              )
               .join("\n")
           )
           .join("\n");
@@ -109,7 +113,7 @@ export async function extractDescription(
 
     return aboutSection || "";
   } catch (error) {
-    console.error("Error extracting About section:", error);
+    console.error("Error extracting product description:", error);
     return "";
   }
 }

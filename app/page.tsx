@@ -10,7 +10,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="container grid items-center gap-6 pb-8 pt-6 md:grid-cols-2 md:py-10">
         <div className="flex flex-col items-start gap-4">
-          <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-5xl lg:text-6xl lg:leading-[1.1]">
+          <h1 className="text-4xl font-bold leading-tight tracking-tighter md:text-5xl lg:text-6xl lg:leading-[1.1]">
             Track Amazon prices,{" "}
             <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
               save money

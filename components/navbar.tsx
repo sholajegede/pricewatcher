@@ -18,13 +18,10 @@ export function Navbar() {
             <Button variant="ghost">Products</Button>
           </Link>
           <Link href="/">
-            <Button variant="ghost">Login</Button>
-          </Link>
-          <Link href="/">
-            <Button>Sign Up</Button>
+            <Button>Login</Button>
           </Link>
         </nav>
       </div>
     </header>
   );
-}
+};

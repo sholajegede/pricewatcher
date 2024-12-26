@@ -87,7 +87,7 @@ export async function getSimilarProducts(productId: string) {
       _id: { $ne: productId }, // Exclude the current product
       category: currentProduct.category,
     })
-      .limit(5);
+      .limit(6);
 
     return similarProducts;
   } catch (error) {
