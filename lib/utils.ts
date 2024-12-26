@@ -90,6 +90,38 @@ export async function extractPageForCategory(
   return "";
 }
 
+export async function extractRating(page: puppeteer.Page): Promise<number> {
+  try {
+    const rating = await page.$eval(
+      "span.a-size-base.a-color-base",
+      (span: Element) => span.textContent?.trim() || "0"
+    );
+
+    return parseFloat(rating);
+  } catch (error) {
+    console.error("Error extracting rating:", error);
+    return 0;
+  }
+}
+
+export async function extractReviewCount(page: puppeteer.Page): Promise<number> {
+  try {
+    const reviewCount = await page.$eval(
+      "#acrCustomerReviewText",
+      (span: Element) =>
+        span.textContent
+          ?.trim()
+          .replace(/[^\d,]/g, "")
+          .replace(/,/g, "")
+    );
+
+    return reviewCount ? parseInt(reviewCount, 10) : 0;
+  } catch (error) {
+    console.error("Error extracting review count:", error);
+    return 0;
+  }
+}
+
 export async function extractDescription(page: puppeteer.Page): Promise<string> {
   try {
     const aboutSection = await page.$$eval(

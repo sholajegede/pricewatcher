@@ -6,6 +6,8 @@ import {
   extractDescription,
   extractPageForCategory,
   extractPrice,
+  extractReviewCount,
+  extractRating
 } from "../utils";
 import { ProductData } from "@/types";
 
@@ -81,6 +83,10 @@ export async function scrapeAmazonProduct(
 
     const description: string = await extractDescription(page);
 
+    const reviews: number = await extractReviewCount(page);
+
+    const rating: number = await extractRating(page);
+
     const pageDetails: string = await extractPageForCategory(page);
 
     const category = extractCategory(pageDetails);
@@ -95,8 +101,8 @@ export async function scrapeAmazonProduct(
       priceHistory: [],
       discountRate,
       category,
-      reviewsCount: 100,
-      stars: 4.5,
+      reviewsCount: reviews,
+      stars: rating,
       isOutOfStock: outOfStock,
       description: description,
       lowestPrice: currentPrice,

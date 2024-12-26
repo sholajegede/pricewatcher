@@ -75,7 +75,7 @@ const ProductDetails = async ({ params: { id } }: Props) => {
           </div>
 
           <div className="flex items-center flex-wrap gap-10 py-6 border-y border-y-[#E4E4E4]">
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-5">
               <p className="text-[34px] text-primary font-bold">
                 {product.currency} {formatNumber(product.currentPrice)}
               </p>
@@ -85,7 +85,7 @@ const ProductDetails = async ({ params: { id } }: Props) => {
                   {product.currency} {formatNumber(product.originalPrice)}
                 </p>
 
-                <Badge className="absolute -top-3 -right-2 bg-green-400">
+                <Badge className="absolute -top-4 -right-3 bg-green-400">
                   -{product.discountRate}%
                 </Badge>
               </div>
@@ -164,7 +164,7 @@ const ProductDetails = async ({ params: { id } }: Props) => {
       <div className="flex flex-col gap-16">
         <div className="flex flex-col gap-5">
           <h3 className="text-2xl text-primary font-semibold">
-            Product Description
+            About the product
           </h3>
 
           <div className="flex flex-col gap-4">
