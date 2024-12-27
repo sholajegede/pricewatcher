@@ -23,6 +23,7 @@ export type Product = {
   category: string;
   reviewsCount: number;
   stars: number;
+  recommendedBy: number;
   isOutOfStock: Boolean;
   users?: User[];
 };
@@ -39,6 +40,7 @@ export interface ProductData {
   category: string;
   reviewsCount: number;
   stars: number;
+  recommendedBy: number;
   isOutOfStock: boolean;
   description: string;
   lowestPrice: number;

@@ -4,7 +4,7 @@ import { getLowestPrice, getHighestPrice, getAveragePrice, getEmailNotifType } f
 import { connectToDB } from "@/lib/mongoose";
 import Product from "@/lib/models/product.model";
 import { scrapeAmazonProduct } from "@/lib/scraper";
-import { generateEmailBody, sendEmail } from "@/lib/nodemailer";
+import { generateEmailBody, sendEmail } from "@/lib/sender";
 
 export const maxDuration = 60; // This function can run for a maximum of 60 seconds
 export const dynamic = "force-dynamic";

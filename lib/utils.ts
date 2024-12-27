@@ -104,6 +104,20 @@ export async function extractRating(page: puppeteer.Page): Promise<number> {
   }
 }
 
+export async function extractFirstPercentage(page: puppeteer.Page): Promise<number> {
+  try {
+    const percentage = await page.$eval(
+      "div.a-section.a-spacing-none.a-text-right.aok-nowrap span._cr-ratings-histogram_style_histogram-column-space__RKUAd",
+      (span: Element) => span.textContent?.trim().replace('%', '') || "0"
+    );
+
+    return parseInt(percentage, 10);
+  } catch (error) {
+    console.error("Error extracting percentage:", error);
+    return 0;
+  }
+}
+
 export async function extractReviewCount(page: puppeteer.Page): Promise<number> {
   try {
     const reviewCount = await page.$eval(

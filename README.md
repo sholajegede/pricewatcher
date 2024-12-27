@@ -43,8 +43,8 @@ If you're getting started and need assistance or face any bugs, join our active 
 
 - Next.js
 - Bright Data
-- Cheerio
-- Nodemailer
+- Puppeteer
+- Resend
 - MongoDB
 - Headless UI
 - Tailwind CSS
@@ -111,7 +111,7 @@ EMAIL_USER=
 EMAIL_PASS=
 ```
 
-Replace the placeholder values with your actual credentials. You can obtain these credentials by signing up on these specific websites from [BrightData](https://brightdata.com/), [MongoDB](https://www.mongodb.com/), and [Node Mailer](https://nodemailer.com/)
+Replace the placeholder values with your actual credentials. You can obtain these credentials by signing up on these specific websites from [BrightData](https://brightdata.com/), [MongoDB](https://www.mongodb.com/), and [Resend](https://resend.com/)
 
 **Running the Project**
 
@@ -133,7 +133,7 @@ import { getLowestPrice, getHighestPrice, getAveragePrice, getEmailNotifType } f
 import { connectToDB } from "@/lib/mongoose";
 import Product from "@/lib/models/product.model";
 import { scrapeAmazonProduct } from "@/lib/scraper";
-import { generateEmailBody, sendEmail } from "@/lib/nodemailer";
+import { generateEmailBody, sendEmail } from "@/lib/sender";
 
 export const maxDuration = 300; // This function can run for a maximum of 300 seconds
 export const dynamic = "force-dynamic";

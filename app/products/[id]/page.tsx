@@ -100,7 +100,7 @@ const ProductDetails = async ({ params: { id } }: Props) => {
                     height={16}
                   />
                   <p className="text-sm text-primary-orange font-semibold">
-                    {product.stars || "25"}
+                    {product.stars || "0"}
                   </p>
                 </div>
 
@@ -112,13 +112,13 @@ const ProductDetails = async ({ params: { id } }: Props) => {
                     height={16}
                   />
                   <p className="text-sm text-primary font-semibold">
-                    {product.reviewsCount} Reviews
+                    {product.reviewsCount.toLocaleString()} Reviews
                   </p>
                 </div>
               </div>
 
               <p className="text-sm text-black opacity-50">
-                <span className="text-primary-green font-semibold">93% </span>{" "}
+                <span className="text-primary-green font-semibold">{product.recommendedBy || 83}%</span>{" "}
                 of buyers have recommended this.
               </p>
             </div>
