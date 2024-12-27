@@ -23,7 +23,8 @@ export const metadata: Metadata = {
       }
     ],
     type: 'website'
-  }
+  },
+  metadataBase: new URL('https://pricewatcher.vercel.app/'),
 };
 
 export default function RootLayout({

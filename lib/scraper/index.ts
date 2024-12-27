@@ -8,19 +8,22 @@ import {
   extractPrice,
   extractReviewCount,
   extractRating,
-  extractFirstPercentage
+  extractFirstPercentage,
 } from "../utils";
 import { ProductData } from "@/types";
 
 export async function scrapeAmazonProduct(
   url: string
 ): Promise<ProductData | null> {
-  if (!url) return null;
+  if (!url) {
+    console.error("URL is missing.");
+    return null;
+  }
 
+  let browser;
   try {
-    const browser = await puppeteer.connect({
-      browserWSEndpoint:
-        process.env.BRIGHT_DATA_BROWSER_WS as string,
+    browser = await puppeteer.connect({
+      browserWSEndpoint: process.env.BRIGHT_DATA_BROWSER_WS as string,
     });
 
     console.log("Connected to Scraping Browser...");
@@ -30,12 +33,14 @@ export async function scrapeAmazonProduct(
     await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
     console.log("Navigated to product page");
 
-    await page.waitForSelector("#productTitle", { timeout: 30000 });
+    // Wait for product title
+    await page.waitForSelector("#productTitle", { timeout: 30000 }).catch(() => {
+      throw new Error("Product title not found on page.");
+    });
 
-    const title: string = await page.$eval(
-      "#productTitle",
-      (el) => el.textContent?.trim() || ""
-    );
+    const title = await page
+      .$eval("#productTitle", (el) => el.textContent?.trim() || "")
+      .catch(() => "Unknown Product");
 
     const currentPrice = parseFloat(
       (await extractPrice(
@@ -46,57 +51,64 @@ export async function scrapeAmazonProduct(
       )) || "0"
     );
 
-    const originalPrice = parseFloat(
-      (await extractPrice(
-        page,
-        "#priceblock_ourprice",
-        ".a-price.a-text-price span.a-offscreen",
-        "#listPrice",
-        "#priceblock_dealprice",
-        ".a-size-base.a-color-price"
-      )) || `${currentPrice}`
-    );
+    // Gracefully handle the priceblock error and fallback to currentPrice
+    let originalPrice = currentPrice; // Default to currentPrice
+    try {
+      originalPrice = parseFloat(
+        (await extractPrice(
+          page,
+          ".a-price.a-text-price span.a-offscreen",
+          "#listPrice",
+          "#priceblock_dealprice",
+          ".a-size-base.a-color-price"
+        )) || `${currentPrice}`
+      );
+    } catch (error) {
+      // No need to log the error, just silently fallback to currentPrice
+    }
 
-    const outOfStock: boolean =
-      (await page.$eval("#availability span", (el) =>
-        el.textContent?.trim().toLowerCase()
-      )) === "currently unavailable";
+    const outOfStock = await page
+      .$eval("#availability span", (el) => el.textContent?.trim().toLowerCase())
+      .catch(() => "in stock") === "currently unavailable";
 
-    const imagesJson =
-      (await page.evaluate(() => {
+    const imagesJson = await page
+      .evaluate(() => {
         const imgElement =
           document.querySelector("#imgBlkFront") ||
           document.querySelector("#landingImage");
         return imgElement?.getAttribute("data-a-dynamic-image");
-      })) || "{}";
+      })
+      .catch(() => "{}");
 
-    const imageUrls: string[] = Object.keys(JSON.parse(imagesJson));
+    const imageUrls = Object.keys(JSON.parse(imagesJson || "{}"));
 
-    const currency: string = await extractCurrency(page, ".a-price-symbol");
+    const currency = await extractCurrency(page, ".a-price-symbol").catch(
+      () => "$"
+    );
 
-    const discountRate: number = parseFloat(
+    const discountRate = parseFloat(
       await page
-        .$eval(".savingsPercentage", (el) => 
+        .$eval(".savingsPercentage", (el) =>
           el.textContent?.replace(/[-%]/g, "").trim() || "0"
         )
         .catch(() => "0")
     );
 
-    const description: string = await extractDescription(page);
+    const description = await extractDescription(page).catch(() => "");
 
-    const reviews: number = await extractReviewCount(page);
+    const reviews = await extractReviewCount(page).catch(() => 0);
 
-    const rating: number = await extractRating(page);
+    const rating = await extractRating(page).catch(() => 0);
 
-    const recommended: number = await extractFirstPercentage(page);
+    const recommended = await extractFirstPercentage(page).catch(() => 0);
 
-    const pageDetails: string = await extractPageForCategory(page);
+    const pageDetails = await extractPageForCategory(page).catch(() => "");
 
     const category = extractCategory(pageDetails);
 
     const data: ProductData = {
       url,
-      currency: currency || "$",
+      currency,
       image: imageUrls[0] || "",
       title,
       currentPrice,
@@ -104,11 +116,11 @@ export async function scrapeAmazonProduct(
       priceHistory: [],
       discountRate,
       category,
-      reviewsCount: reviews || 100,
-      stars: rating || 4.5,
-      recommendedBy: recommended || 83,
+      reviewsCount: reviews || 0,
+      stars: rating || 0,
+      recommendedBy: recommended || 0,
       isOutOfStock: outOfStock,
-      description: description,
+      description,
       lowestPrice: currentPrice,
       highestPrice: originalPrice,
       averagePrice: currentPrice,
@@ -116,21 +128,19 @@ export async function scrapeAmazonProduct(
 
     console.log("Data extracted:", data);
 
-    await browser.close();
-
     return data;
   } catch (error: any) {
     console.error("Error scraping Amazon product:", error.message);
     return null;
+  } finally {
+    if (browser) {
+      await browser.close().catch(() => console.error("Failed to close browser."));
+    }
   }
-};
+}
 
+// Updated `extractCategory` function
 function extractCategory(description: string): string {
-  const firstLine = description.split("\n")[0]?.trim();
-
-  if (firstLine) {
-    return firstLine;
-  }
-
-  return "Other";
-};
+  const firstLine = description?.split("\n")[0]?.trim();
+  return firstLine || "Other";
+}
